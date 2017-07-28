@@ -1,0 +1,193 @@
+#!/system/bin/sh
+
+# siftools
+# a set of shell utilities for love live school idol festival on
+# android
+
+# this is unencumbered software released into the public domain
+# see the attached UNLICENSE or http://unlicense.org
+
+version=1.0.0
+me=$(basename $0)
+config="$HOME"/.sifrc
+
+errcho() {
+    (>&2 echo $@)
+}
+
+usage()
+{
+    errcho "usage: $me <command> <args>"
+
+    (
+cat >&2 << "EOF"
+
+    start <account> <xml path>
+        kills the game, copies the xml and restarts it.
+        pass "?" as as the path to get a menu selection
+
+    kill
+        kills the game
+
+    help
+    ?
+    -h
+    --help
+        shows this manual
+EOF
+    )
+}
+
+check_set()
+{
+    var=$(eval echo \$$1)
+    if [ "${var}x" = "x" ]
+    then
+        errcho "please set $1"
+        return 1
+    fi
+    return 0
+}
+
+ssh_options()
+{
+    cmd=""
+    novf="$SIF_SSH_NO_VERIFY"
+    if [ ${novf}x = "yesx" ]
+    then
+        cmd="$cmd -o UserKnownHostsFile=/dev/null"
+        cmd="$cmd -o StrictHostKeyChecking=no"
+    fi
+
+    echo "$cmd"
+}
+
+ssh_do()
+{
+    cmd="ssh $(ssh_options)"
+    $cmd "$@"
+}
+
+scp_do()
+{
+    cmd="scp $(ssh_options)"
+    $cmd "$@"
+}
+
+invalid_arg()
+{
+    errcho "invalid argument"
+    errcho ""
+    usage
+    exit 1
+}
+
+sif_kill()
+{
+    if [ "$#" -ne 0 ]; then
+        invalid_arg
+    fi
+
+    check_set SIF_PKG || exit 1
+    su -c "am force-stop \"$SIF_PKG\""
+
+    pid=$(pgrep "$SIF_PKG")
+    [ "${pid}x" = "x" ] || su -c "kill -9 $pid"
+}
+
+sif_start()
+{
+    if [ "$#" -gt 1 ]; then
+        invalid_arg
+    fi
+
+    check_set SIF_ACCOUNTS_ROOT || exit 1
+    check_set SIF_ACCOUNTS_HOST || exit 1
+
+    ar=$SIF_ACCOUNTS_ROOT
+    ah=$SIF_ACCOUNTS_HOST
+
+    xml=""
+
+    if [ "$#" -eq 1 ]
+    then
+        if [ "$1" = "?" ]
+        then
+            check_set SIF_MENU || exit 1
+            sm="$SIF_MENU"
+
+            findcmd="find \"$ar\" -name *.xml > /tmp/sif_list.txt"
+            ssh_do $ah $findcmd || return 1
+
+            tmpfile="$(mktemp)"
+            scp_do $ah:/tmp/sif_list.txt "$tmpfile" || return 1
+
+            xml=$(cat "$tmpfile" | $sm)
+            if [ "${xml}x" = "x" ]
+            then
+                errcho "choice canceled"
+                return 1
+            fi
+        else
+            xml="$1"
+        fi
+    fi
+
+    if [ "${xml}x" != "x" ]
+    then
+        check_set SIF_SHARED_PREFS
+        check_set SIF_XML_NAME
+
+        shrp="$SIF_SHARED_PREFS"
+        shrxml="$SIF_XML_NAME"
+
+        tmpfile=$(mktemp)
+        scp_do $ah:"$xml" "$tmpfile"
+        su -c "cp '$tmpfile' '$shrp'/'$shrxml'"
+    fi
+
+    sif_kill
+    su -c "am start -n '$SIF_PKG/$SIF_ACTIVITY'"
+}
+
+sif_usage()
+{
+    if [ "$#" -ne 0 ]; then
+        invalid_arg
+    fi
+
+    usage
+}
+
+# -----------------------------------------------------------------
+
+errcho "siftool $version"
+
+if [ -e $config ]
+then
+    errcho "sourcing $config"
+    source "$config"
+fi
+
+errcho ""
+
+if ! which su > /dev/null 2>&1
+then
+    errcho "su not found, your device must be rooted"
+    exit 1
+fi
+
+if [ "$#" -lt 1 ]; then
+    invalid_arg
+fi
+
+cmd="$1"
+shift
+
+case "$cmd" in
+    start)            sif_start "$@" ;;
+    kill)             sif_kill  "$@" ;;
+    help|?|-h|--help) sif_usage "$@" ;;
+    *)                invalid_arg    ;;
+esac
+

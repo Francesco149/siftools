@@ -1,0 +1,23 @@
+#!/system/bin/sh
+
+# put this in ~/.sifrc
+
+# your host pc's address and base path for the xml's
+export SIF_ACCOUNTS_HOST="loli@192.168.1.10"
+export SIF_ACCOUNTS_ROOT="/home/loli/wdtan/coding/sif/llsifclient"
+
+# menu software used to choose xml's. must be either percol or
+# any alternative that has compatible parameters and output
+export SIF_MENU="percol"
+
+# you can uncomment this to disable verification of ssh
+# authenticity (not recommended)
+#export SIF_SSH_NO_VERIFY="yes"
+
+# you probably don't want to touch these unless you are switching
+# to a different game version
+export SIF_PKG="klb.android.lovelive_en"
+export SIF_ACTIVITY="klb.android.GameEngine.GameEngineActivity"
+export SIF_SHARED_PREFS="/data/data/$SIF_PKG/shared_prefs"
+export SIF_XML_NAME="GameEngineActivity.xml"
+
