@@ -177,7 +177,7 @@ sif_usage()
 
 # -----------------------------------------------------------------
 
-errcho "siftool $version"
+errcho "siftools $version"
 
 if [ -e $config ]
 then
