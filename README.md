@@ -40,9 +40,9 @@ ssh-copy-id youruser@your.host.pc.ip
   it empty.
 * install siftool  
 ```
-curl https://github.com/Francesco149/siftool/master/sif > sif
+curl https://raw.githubusercontent.com/Francesco149/siftools/master/sif > sif
 chmod +x sif
-curl https://github.com/Francesco149/siftool/master/sifrc.example \
+curl https://raw.githubusercontent.com/Francesco149/siftools/master/sifrc.example \
   > ~/.sifrc
 chmod +x ~/.sifrc
 nano ~/.sifrc # or your favorite editor
