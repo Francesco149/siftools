@@ -50,6 +50,11 @@ nano ~/.sifrc # or your favorite editor
   
   make sure to adjust values in .sifrc as explained by the comments
   inside.
+  
+  you will also want to disable root access notifications for
+  applications you've already enabled in supersu/superuser or
+  whatever you are using, otherwise you will get spammed much like
+  with the ssh passphrase.
 
 # Usage
 ```
