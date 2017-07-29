@@ -53,7 +53,7 @@ ssh_options()
 {
     cmd=""
     novf="$SIF_SSH_NO_VERIFY"
-    if [ ${novf}x = "yesx" ]
+    if [ "${novf}x" = "yesx" ]
     then
         cmd="$cmd -o UserKnownHostsFile=/dev/null"
         cmd="$cmd -o StrictHostKeyChecking=no"
