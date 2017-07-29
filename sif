@@ -7,7 +7,7 @@
 # this is unencumbered software released into the public domain
 # see the attached UNLICENSE or http://unlicense.org
 
-version=1.0.0
+version=1.0.1
 me=$(basename $0)
 config="$HOME"/.sifrc
 
@@ -28,6 +28,11 @@ cat >&2 << "EOF"
 
     kill
         kills the game
+
+    reset
+        deletes the current account xml from the device so you can
+        create a new account. WARNING: does not ask for
+        confirmation
 
     help
     ?
@@ -93,6 +98,17 @@ sif_kill()
 
     pid=$(pgrep "$SIF_PKG")
     [ "${pid}x" = "x" ] || su -c "kill -9 $pid"
+}
+
+sif_reset()
+{
+    check_set SIF_SHARED_PREFS
+    check_set SIF_XML_NAME
+
+    shrp="$SIF_SHARED_PREFS"
+    shrxml="$SIF_XML_NAME"
+
+    su -c "rm '$shrp'/'$shrxml'"
 }
 
 sif_start()
@@ -187,6 +203,7 @@ shift
 case "$cmd" in
     start)            sif_start "$@" ;;
     kill)             sif_kill  "$@" ;;
+    reset)            sif_reset "$@" ;;
     help|?|-h|--help) sif_usage "$@" ;;
     *)                invalid_arg    ;;
 esac
