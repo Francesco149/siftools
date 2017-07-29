@@ -38,7 +38,7 @@ ssh-copy-id youruser@your.host.pc.ip
   I leave everything default in ssh-keygen. setting up a passphrase
   is safer, but it will bug you every time you run sif, so I leave
   it empty.
-* install siftool  
+* install siftools  
 ```
 curl https://raw.githubusercontent.com/Francesco149/siftools/master/sif > sif
 chmod +x sif
