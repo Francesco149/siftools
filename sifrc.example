@@ -18,6 +18,8 @@ export SIF_MENU="percol"
 # to a different game version
 export SIF_PKG="klb.android.lovelive_en"
 export SIF_ACTIVITY="klb.android.GameEngine.GameEngineActivity"
-export SIF_SHARED_PREFS="/data/data/$SIF_PKG/shared_prefs"
+export SIF_DIR="/data/data/$SIF_PKG"
+export SIF_SHARED_PREFS="$SIF_DIR/shared_prefs"
+export SIF_FILES="$SIF_DIR/files"
 export SIF_XML_NAME="GameEngineActivity.xml"
 

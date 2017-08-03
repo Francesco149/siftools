@@ -7,7 +7,7 @@
 # this is unencumbered software released into the public domain
 # see the attached UNLICENSE or http://unlicense.org
 
-version=1.0.1
+version=1.0.2
 me=$(basename $0)
 config="$HOME"/.sifrc
 
@@ -33,6 +33,10 @@ cat >&2 << "EOF"
         deletes the current account xml from the device so you can
         create a new account. WARNING: does not ask for
         confirmation
+
+    dump
+        copies the game's files directory to the current working
+        directory and labels it with the current date
 
     help
     ?
@@ -166,6 +170,20 @@ sif_start()
     su -c "am start -n '$SIF_PKG/$SIF_ACTIVITY'"
 }
 
+sif_dump()
+{
+    [ "$#" -ne 0 ] && invalid_arg
+
+    check_set SIF_FILES
+    check_set SIF_PKG
+
+    dstuser=$(whoami)
+    dstdir="$(pwd)/${SIF_PKG}_files_$(date +%Y%m%d)"
+    errcho "dumping to $dstdir"
+    su -c "cp -r \"$SIF_FILES\" \"$dstdir\""
+    su -c "chown -R $dstuser:$dstuser \"$dstdir\""
+}
+
 sif_usage()
 {
     if [ "$#" -ne 0 ]; then
@@ -204,6 +222,7 @@ case "$cmd" in
     start)            sif_start "$@" ;;
     kill)             sif_kill  "$@" ;;
     reset)            sif_reset "$@" ;;
+    dump)             sif_dump  "$@" ;;
     help|?|-h|--help) sif_usage "$@" ;;
     *)                invalid_arg    ;;
 esac
