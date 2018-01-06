@@ -7,7 +7,7 @@
 # this is unencumbered software released into the public domain
 # see the attached UNLICENSE or http://unlicense.org
 
-version=1.0.2
+version=1.0.3
 me=$(basename $0)
 config="$HOME"/.sifrc
 
@@ -178,10 +178,17 @@ sif_dump()
     check_set SIF_PKG
 
     dstuser=$(whoami)
-    dstdir="$(pwd)/${SIF_PKG}_files_$(date +%Y%m%d)"
-    errcho "dumping to $dstdir"
-    su -c "cp -r \"$SIF_FILES\" \"$dstdir\""
-    su -c "chown -R $dstuser:$dstuser \"$dstdir\""
+
+    i=""
+    for file in $SIF_FILES
+    do
+        dstdir="$(pwd)/${SIF_PKG}_files_$(date +%Y%m%d)-"
+        dstdir="$dstdir$(printf '%s' $i | wc -c)"
+        errcho "dumping to $dstdir"
+        su -c "cp -r \"$file\" \"$dstdir\""
+        su -c "chown -R $dstuser:$dstuser \"$dstdir\""
+        i="${i}x" # ghetto way to make a counter
+    done
 }
 
 sif_usage()

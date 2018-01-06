@@ -20,6 +20,6 @@ export SIF_PKG="klb.android.lovelive_en"
 export SIF_ACTIVITY="klb.android.GameEngine.GameEngineActivity"
 export SIF_DIR="/data/data/$SIF_PKG"
 export SIF_SHARED_PREFS="$SIF_DIR/shared_prefs"
-export SIF_FILES="$SIF_DIR/files"
+export SIF_FILES="$SIF_DIR/files /data/app/$SIF_PKG-1"
 export SIF_XML_NAME="GameEngineActivity.xml"
 
