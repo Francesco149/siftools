@@ -7,7 +7,7 @@
 # this is unencumbered software released into the public domain
 # see the attached UNLICENSE or http://unlicense.org
 
-version=1.0.4
+version=1.0.6
 me=$(basename $0)
 config="$HOME"/.sifrc
 
@@ -163,7 +163,7 @@ sif_start()
         shrxml="$SIF_XML_NAME"
 
         tmpfile=$(mktemp)
-        scp_do $ah:"$xml" "$tmpfile"
+        scp_do $ah:"'$xml'" "$tmpfile"
         su -c "cp '$tmpfile' '$shrp'/'$shrxml'"
     fi
 
