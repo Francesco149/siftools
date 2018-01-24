@@ -7,7 +7,7 @@
 # this is unencumbered software released into the public domain
 # see the attached UNLICENSE or http://unlicense.org
 
-version=1.0.3
+version=1.0.4
 me=$(basename $0)
 config="$HOME"/.sifrc
 
@@ -136,11 +136,12 @@ sif_start()
             check_set SIF_MENU || exit 1
             sm="$SIF_MENU"
 
-            findcmd="find \"$ar\" -name *.xml > /tmp/sif_list.txt"
+            txtpath="/tmp/sif_list.txt"
+            findcmd="find \"$ar\" -name \"*.xml\" > $txtpath"
             ssh_do $ah $findcmd || return 1
 
             tmpfile="$(mktemp)"
-            scp_do $ah:/tmp/sif_list.txt "$tmpfile" || return 1
+            scp_do $ah:$txtpath "$tmpfile" || return 1
 
             xml=$(cat "$tmpfile" | $sm)
             if [ "${xml}x" = "x" ]
